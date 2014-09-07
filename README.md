@@ -17,6 +17,13 @@ normal std streams. All std streams share a single configuration for what they
 will and will not write, for this reason it is inadvisable to use this with std
 streams in a multi threaded situation.
 
+The LogLevels used in this library are a bitmap mask. Instead of assigning each
+LogLevel a number and logging everything of that level or higher the severity
+of each message is compared bitwise with the list of severities to be logged.
+If any match the messages is written, otherwise it is dropped. There is a 
+series of default LogLevel values that make duplicating the 'this severity or
+higher' behavior, but this allows for fine grained control should it be needed.
+
 The are 3 files of note in this library
 
    1. main.cpp - This is a small sample of this libraries intended use and

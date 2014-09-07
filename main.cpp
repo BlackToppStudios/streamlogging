@@ -45,11 +45,6 @@
 /// @brief This serves as a simple example and sanity test of what this library is intended todo 
 int main()
 {
-    /*SetStandardLoggingLevel(MergeLogLevel(Trace,Debug));
-    std::cout << "Should be displayed - Default" << std::endl;
-    std::cout << LogWarn << "Should be NOT displayed - Warning" << std::endl;
-    std::cout << LogTrace << "Should be displayed - Trace" << std::endl;*/
-
     LogStream<char> LogOut(std::cout);
     LogOut.SetLoggingLevel(LL_DebugAndHigher);
     LogOut << "Part 1 - Logging against a LogStream" << std::endl;
@@ -58,13 +53,17 @@ int main()
     LogOut << LogError << "Should be displayed - Error" << std::endl;
     LogOut << LogTrace << "Should be NOT displayed - Trace" << std::endl;
     LogOut << LogFatal << "Should be displayed - Fatal" << std::endl;
+    std::cout << "You should have seen no 'NOT's and 4 messages with the word 'displayed'." << std::endl << std::endl;
 
-    SetStandardLoggingLevel(MergeLogLevel(LL_Trace,LL_Debug,LL_Warn));
+    SetStandardLoggingLevel( MergeLogLevel(LL_Trace, LL_Debug,LL_Warn) );
     std::cout << "Part 2 - Logging against any other stream" << std::endl;
     std::cout << "Should be displayed - Default" << std::endl;
     std::cout << LogWarn << "Should be displayed - Warning" << std::endl;
     std::cout << LogError << "Should be NOT displayed - Error" << std::endl;
     std::cout << LogTrace << "Should be displayed - Trace" << std::endl;
     std::cout << LogFatal << "Should be NOT displayed - Fatal" << std::endl;
+    std::cout << LogTrace << "You should have seen no 'NOT's and 3 messages with the word 'displayed'." << std::endl << std::endl;
 
+
+    return 0;
 }
