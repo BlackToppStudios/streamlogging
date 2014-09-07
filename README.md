@@ -5,11 +5,17 @@ A small set of upgrades to C++ streams to make them more suitable for logging.
 
 Specifically this provides an additional stream that can optionally stream
 messages based on severity. The stream can be configured at runtime to respect
-only some messages and drop the rest.
+only some messages and drop the rest. When creating a LogStream another streamlog
+must be passed to configure where and how it will write streamed data.
 
 The are some stream manipulators provided as well. These are items that when
 sent to a stream will change its logging behavior rather than insert actual
 content into the stream.
+
+There are some facilities for using these manipulators and loglevels with the
+normal std streams. All std streams share a single configuration for what they
+will and will not write, for this reason it is inadvisable to use this with std
+streams in a multi threaded situation.
 
 The are 3 files of note in this library
 
