@@ -36,3 +36,7 @@ The are 3 files of note in this library
 
    3. streamlogging.cpp - The few items that require real code are implented
                           in this file.
+
+To use this library in your project simply include streamlogging.h and
+streamlogging.cpp as you would any other C++ files.
+

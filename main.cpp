@@ -39,31 +39,84 @@
 */
 
 #include <iostream>
+#include <sstream>
+#include <string>
 
 #include "streamlogging.h"
+
+/// @brief Used to ease integration with the mezzanine, not require for external use
+typedef std::string String;
+
+/// @brief Used to ease integration with the mezzanine, not require for external use
+typedef int Integer;
+
+
+/// @brief This matches a MACRO in the Mezzanine test suite, and exists solely for compatibility
+/// @param Results This is setup to allow a boolean condition to be passed
+/// @param TestName The name of the test for Mezzanine metadata purpose, pretty useless he actually.
+void TEST(bool Results, const String& TestName)
+{
+    std::cout << TestName << ": ";
+    if(Results)
+    {
+        std::cout << "Passed.";
+    }else{
+        std::cout << "Fail!";
+    }
+    std::cout << std::endl;
+}
+
+
+/// @brief Counts the amount of needles is found in the haystack
+/// @param Haystack A String to search through
+/// @param Needle A string to find in entirety
+Integer FindCount(const String& Haystack, const String& Needle)
+{
+    Integer Results = 0;
+    size_t LastFound = Haystack.find(Needle);
+    while(LastFound != String::npos)
+    {
+        Results++;
+        LastFound = Haystack.find(Needle, LastFound+1);
+    }
+    return Results;
+}
 
 /// @brief This serves as a simple example and sanity test of what this library is intended todo 
 int main()
 {
-    LogStream<char> LogOut(std::cout);
-    LogOut.SetLoggingLevel(LL_DebugAndHigher);
-    LogOut << "Part 1 - Logging against a LogStream" << std::endl;
-    LogOut << "Should be displayed - Default" << std::endl;
-    LogOut << LogWarn << "Should be displayed - Warning" << std::endl;
-    LogOut << LogError << "Should be displayed - Error" << std::endl;
-    LogOut << LogTrace << "Should be NOT displayed - Trace" << std::endl;
-    LogOut << LogFatal << "Should be displayed - Fatal" << std::endl;
-    std::cout << "You should have seen no 'NOT's and 4 messages with the word 'displayed'." << std::endl << std::endl;
+    {
+        std::stringstream TestStealRDBuf;
+        LogStream<char> LogOut(TestStealRDBuf);
+        LogOut.SetLoggingLevel(LL_DebugAndHigher);
+        LogOut << "Part 1 - Logging against a LogStream backedby an std::stringstream" << std::endl;
+        LogOut << "Should be displayed - Default" << std::endl;
+        LogOut << LogWarn << "Should be displayed - Warning" << std::endl;
+        LogOut << LogError << "Should be displayed - Error" << std::endl;
+        LogOut << LogTrace << "Should be NOT displayed - Trace" << std::endl;
+        LogOut << LogFatal << "Should be displayed - Fatal" << std::endl;
+        String Output(TestStealRDBuf.str());
+        std::cout << Output << std::endl;
+        TEST(0 == FindCount(Output, "NOT"), "InternalNotsDropped");
+        TEST(4 == FindCount(Output, "displayed"), "InternalPassedThrough");
+        std::cout << "You should have seen no 'NOT's and 4 messages with the word 'displayed'." << std::endl << std::endl;
+    }
 
-    SetStandardLoggingLevel( MergeLogLevel(LL_Trace, LL_Debug,LL_Warn) );
-    std::cout << "Part 2 - Logging against any other stream" << std::endl;
-    std::cout << "Should be displayed - Default" << std::endl;
-    std::cout << LogWarn << "Should be displayed - Warning" << std::endl;
-    std::cout << LogError << "Should be NOT displayed - Error" << std::endl;
-    std::cout << LogTrace << "Should be displayed - Trace" << std::endl;
-    std::cout << LogFatal << "Should be NOT displayed - Fatal" << std::endl;
-    std::cout << LogTrace << "You should have seen no 'NOT's and 3 messages with the word 'displayed'." << std::endl << std::endl;
-
+    {
+        std::stringstream TestRawStream;
+        SetStandardLoggingLevel( MergeLogLevel(LL_Trace, LL_Debug,LL_Warn) );
+        TestRawStream << "Part 2 - Logging against any other stream" << std::endl;
+        TestRawStream << "Should be displayed - Default" << std::endl;
+        TestRawStream << LogWarn << "Should be displayed - Warning" << std::endl;
+        TestRawStream << LogError << "Should be NOT displayed - Error" << std::endl;
+        TestRawStream << LogTrace << "Should be displayed - Trace" << std::endl;
+        TestRawStream << LogFatal << "Should be NOT displayed - Fatal" << std::endl;
+        String Output(TestRawStream.str());
+        std::cout << Output << std::endl;
+        TEST(0 == FindCount(Output, "NOT"), "StandardExternalNotsDropped");
+        TEST(3 == FindCount(Output, "displayed"), "StandardExternalPassedThrough");
+        std::cout << "You should have seen no 'NOT's and 3 messages with the word 'displayed'." << std::endl << std::endl;
+    }
 
     return 0;
 }
