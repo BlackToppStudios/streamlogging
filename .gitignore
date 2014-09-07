@@ -19,3 +19,29 @@
 *.exe
 *.out
 *.app
+
+# QT Creator Items
+CMakeLists.txt.user*
+
+# Doxygen Temp Files
+*.tmp
+
+# Editor Temp Files
+*~
+*.autosave
+
+# Libraries
+*.a
+*.dll
+*.so
+*.so.*
+
+# Mac OS X spotlight
+.DS_Store
+
+
+# Ignore libincludes mercurial files
+.hg*
+
+# other git files
+.git*
